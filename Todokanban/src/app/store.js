@@ -12,9 +12,9 @@ const loadState = () => {
 
 const saveState = (state) => {
   try {
-    localStorage.setItem("tasks", JSON.stringify(state.tasks));
+    localStorage.setItem("tasks", JSON.stringify(state));
   } catch {
-    console.log("Failed to save state");
+    console.error("Failed to save state");
   }
 };
 
@@ -22,11 +22,11 @@ export const store = configureStore({
   reducer: {
     tasks: taskReducer,
   },
-  preloadedState: loadState(),
+  preloadedState: {
+    tasks: loadState() || { byId: {}, allIds: [] },
+  },
 });
 
 store.subscribe(() => {
-  saveState({
-    tasks: store.getState().tasks,
-  });
+  saveState(store.getState().tasks);
 });
