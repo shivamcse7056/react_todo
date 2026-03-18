@@ -21,7 +21,7 @@ const Board = () => {
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <div className="max-w-6xl mx-auto">
-            <div className="text-3xl text-bold bg-blue-500 item-center text-center">TODO App</div>
+            <div className="text-3xl text-bold bg-blue-500 item-center text-center p-4">TODO App</div>
         <AddTask />
 
         <div className="grid grid-cols-3 gap-6 p-6">
