@@ -3,6 +3,7 @@ import { createSlice, nanoid } from "@reduxjs/toolkit";
 const initialState = {
   byId: {},
   allIds: [],
+  editingTaskId: null,
 };
 
 const taskSlice = createSlice({
@@ -32,12 +33,22 @@ const taskSlice = createSlice({
       state.allIds = state.allIds.filter(t => t !== id);
     },
 
+    setEditingTask(state, action) {
+        state.editingTaskId = action.payload;
+    },
+
+    clearEditingTask(state) {
+        state.editingTaskId = null;
+    },
+
     editTask(state, action) {
         const { id, title } = action.payload;
 
         if (state.byId[id]) {
             state.byId[id].title = title;
         }
+
+        state.editingTaskId = null; // reset after edit
     },
 
     moveTask(state, action) {
@@ -50,5 +61,5 @@ const taskSlice = createSlice({
   },
 });
 
-export const { addTask, deleteTask, moveTask, editTask } = taskSlice.actions;
+export const { addTask, deleteTask, moveTask, editTask, setEditingTask, clearEditingTask } = taskSlice.actions;
 export default taskSlice.reducer;

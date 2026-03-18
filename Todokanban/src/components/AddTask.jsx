@@ -1,14 +1,42 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addTask } from "../features/tasks/taskSlice";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addTask,
+  editTask,
+  clearEditingTask,
+} from "../features/tasks/taskSlice";
 
 const AddTask = () => {
-  const [text, setText] = useState("");
   const dispatch = useDispatch();
 
-  const handleAdd = () => {
+  const editingTaskId = useSelector(
+    (state) => state.tasks.editingTaskId
+  );
+
+  const task = useSelector((state) =>
+    editingTaskId ? state.tasks.byId[editingTaskId] : null
+  );
+
+  const [text, setText] = useState("");
+
+
+  useEffect(() => {
+    if (task) {
+      setText(task.title);
+    } else {
+      setText("");
+    }
+  }, [task]);
+
+  const handleSubmit = () => {
     if (!text.trim()) return;
-    dispatch(addTask(text));
+
+    if (editingTaskId) {
+      dispatch(editTask({ id: editingTaskId, title: text }));
+    } else {
+      dispatch(addTask(text));
+    }
+
     setText("");
   };
 
@@ -18,14 +46,28 @@ const AddTask = () => {
         className="border p-2 rounded w-full"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Add task..."
+        placeholder={
+          editingTaskId ? "Edit task..." : "Add task..."
+        }
       />
+
       <button
-        onClick={handleAdd}
-        className="bg-blue-500 text-white px-4 rounded"
+        onClick={handleSubmit}
+        className={`px-4 rounded text-white ${
+          editingTaskId ? "bg-green-500" : "bg-blue-500"
+        }`}
       >
-        Add
+        {editingTaskId ? "Update" : "Add"}
       </button>
+
+      {editingTaskId && (
+        <button
+          onClick={() => dispatch(clearEditingTask())}
+          className="bg-gray-400 text-white px-3 rounded"
+        >
+          Cancel
+        </button>
+      )}
     </div>
   );
 };
